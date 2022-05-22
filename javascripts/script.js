@@ -1,4 +1,5 @@
 this.ref_ = {
+    // Demo data
     data: [{"dayid":0,"dayc":[{"id":0,"start":"1000","end":"1755","txt":1,"isAvailable":1},{"id":1,"start":"0930","end":"1015","txt":1,"isAvailable":1},{"id":2,"start":"1300","end":"1350","txt":0,"isAvailable":1,"level":0,"age":1},{"id":3,"start":"1500","end":"1645","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":1,"dayc":[]},{"dayid":2,"dayc":[{"id":1,"start":"1230","end":"1500","txt":0,"isAvailable":0,"level":2,"age":2},{"id":2,"start":"0910","end":"1040","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":3,"dayc":[{"id":0,"start":"0900","end":"0940","txt":0,"isAvailable":1,"level":0,"age":0},{"id":1,"start":"1315","end":"1445","txt":1,"isAvailable":1}]},{"dayid":4,"dayc":[{"id":0,"start":"1110","end":"1240","txt":0,"isAvailable":1,"level":1,"age":2}]},{"dayid":5,"dayc":[{"id":0,"start":"0900","end":"1000","txt":1,"isAvailable":1},{"id":1,"start":"1300","end":"1430","txt":0,"isAvailable":1,"level":null,"age":2},{"id":2,"start":"1100","end":"1230","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":6,"dayc":[{"id":1,"start":"1330","end":"1510","txt":1,"isAvailable":1},{"id":2,"start":"1230","end":"1330","txt":1,"isAvailable":1}]}]
 }
 
@@ -20,10 +21,6 @@ console.log(this.ref_);
             
             this.root.appendChild(panel);
             !document.body.classList.contains('--burger') || document.querySelectorAll('.pnc-cs-clk').forEach(e => { e.onclick = () => { _.hide(panel) }});
-        }
-        
-        _.generatePanel = () => {
-            // function that generate rdv info panel for mobile devices
         }
         
         _.scrollShadow = (e, l) => {
@@ -121,7 +118,7 @@ console.log(this.ref_);
                     o = this.root.getBoundingClientRect(),
                     l = _.desktop() ? e.clientX < o.left + o.width - (i.width + 10) ? 10 : - (i.width) : e.clientX < o.left + o.width/2 ? 10 : - (i.width),
                     m = e.clientY < o.top + o.height - (i.height + 10) ? 10 : - (i.height);
-                // console.log(e.clientX < o.left + o.width - (i.width + 10), e.clientY < o.top + o.height - (i.height + 10));
+
                 if (!y) d.style.transform = 'translate('+ (e.clientX + l) +'px, '+ (e.clientY + m) +'px)';
                 else d.style.transform = 'translate('+ (e.clientX + l) +'px, '+ (e.clientY + m) +'px)';
             }
@@ -266,9 +263,6 @@ console.log(this.ref_);
             l.setAttribute("class", "cal-grid-lp");
             r.setAttribute("class", "cal-grid-rp");
             s.setAttribute("class", "cal-grid-rp-c");
-            // _.rdvCnt = document.createElement("div");
-            // _.rdvCnt.setAttribute("class", "cal-grid-rdv-c");
-            // r.appendChild(_.rdvCnt);
         
             for(var x = 0; x < duration; x++) {
                 let dn = document.createElement("div"),
@@ -290,9 +284,6 @@ console.log(this.ref_);
                 d.setAttribute("class", "cal-grid-el-pr");
                 d.setAttribute("cal-line-index", y);
                 un.setAttribute("class", "cal-line-r-c");
-                // if (y == 0) {
-                //     d.classList.add("selected-day");
-                // }
                 for(var x = 0; x < duration; x++) {
                     let dy = document.createElement("div");
                     dy.setAttribute("class", "cal-grid-el-in");
@@ -301,7 +292,6 @@ console.log(this.ref_);
                     dy.style.setProperty("--cal-el-uniheight", this.uniHeight+"px");
                     d.appendChild(dy);
                 }
-                // dn.style.height = (((this.root.getBoundingClientRect().width - (this.root.getBoundingClientRect().width * 0.07)) / 7) / _.aspect()) + "px";
                 _.addRElement(un, content[y], dates[y], y);
                 d.appendChild(un);
                 s.appendChild(d);
@@ -345,9 +335,6 @@ console.log(this.ref_);
                     d = document.createElement("div");
                 b.setAttribute("day", x);
                 b.setAttribute("class", "cal-tp-day");
-                // if (x == 0) {
-                //     b.classList.add("selected-day");
-                // }
                 if (_.td == x && !_.nextWeek) b.classList.add('cal-curr-day')
                 d.setAttribute('class', 'cal-tpd-c');
                 d.innerHTML = '<h3 class="cal-tp-day-tt">'+this.langDay[x]+'</h3><h2 class="cal-tp-day-nb">'+w[x]+'</h2>';
@@ -451,7 +438,6 @@ console.log(this.ref_);
         }
         
         _.getElementsIndex = (a) => {
-            // console.log(a);
         
             var b = [],
                 res = {};
@@ -557,26 +543,30 @@ console.log(this.ref_);
         }
         
         _.getElements = () => {
-            // _.sendHttpRequest('GET', '/db/cplanning')
-            // .then(res => {
-            //     if (!res.isError) {
-            //         return res.response;
-            //     } else {
-            //         return _.dataErrorHandler();
-            //     }
-            // })
-            // .then(data => {
-            //     if (data) {
-            //         this.content = data.result;
-            //         _.gridDays(this.content);
-            //     }
-            // })
-            // .catch(error => {
-            //     console.info(error);
-            //     _.dataErrorHandler();
-            // });
+            /*
+             *
+             *  To get server data
+             *
+            _.sendHttpRequest('GET', '/db/cplanning')
+            .then(res => {
+                if (!res.isError) {
+                    return res.response;
+                } else {
+                    return _.dataErrorHandler();
+                }
+            })
+            .then(data => {
+                if (data) {
+                    this.content = data.result;
+                    _.gridDays(this.content);
+                }
+            })
+            .catch(error => {
+                console.info(error);
+                _.dataErrorHandler();
+            });
+            */
             this.content = that.ref_.data;
-            console.log(this.content);
             _.gridDays(this.content);
         }
         

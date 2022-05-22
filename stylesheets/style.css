@@ -985,3 +985,10 @@ body {
 .white-scheme .tab-bar a {
     color: #FFF !important;
 }
+
+.error-handl {
+    color: red;
+    font-size: 1em;
+    background-color: #FFF;
+    padding: 40px 0;
+}
