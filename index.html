@@ -12,9 +12,47 @@
 </head>
 <body>
     <section class="planning-content">
-        <planning-root class="planning-root"></planning-root>
+        <!-- 
+            calendar root
+        -->
+        <calendar-root class="planning-root"></calendar-root>
     </section>
 
-    <script src="./javascripts/script.js"></script>
+    <script src="./javascripts/calendar.js"></script>
+
+    <script>
+        // define calendar root 
+        const base = document.querySelector('calendar-root');
+        // initialization
+        const cal = new Calendar(base, {
+            // required data, json format, accept empty arrays
+            // data: [],
+            // demo data \\
+            data: [{"dayid":0,"dayc":[{"id":0,"start":"1000","end":"1755","txt":1,"isAvailable":1},{"id":1,"start":"0930","end":"1015","txt":1,"isAvailable":1},{"id":2,"start":"1300","end":"1350","txt":0,"isAvailable":1,"level":0,"age":1},{"id":3,"start":"1500","end":"1645","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":1,"dayc":[]},{"dayid":2,"dayc":[{"id":1,"start":"1230","end":"1500","txt":0,"isAvailable":0,"level":2,"age":2},{"id":2,"start":"0910","end":"1040","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":3,"dayc":[{"id":0,"start":"0900","end":"0940","txt":0,"isAvailable":1,"level":0,"age":0},{"id":1,"start":"1315","end":"1445","txt":1,"isAvailable":1}]},{"dayid":4,"dayc":[{"id":0,"start":"1110","end":"1240","txt":0,"isAvailable":1,"level":1,"age":2}]},{"dayid":5,"dayc":[{"id":0,"start":"0900","end":"1000","txt":1,"isAvailable":1},{"id":1,"start":"1300","end":"1430","txt":0,"isAvailable":1,"level":null,"age":2},{"id":2,"start":"1100","end":"1230","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":6,"dayc":[{"id":1,"start":"1330","end":"1510","txt":1,"isAvailable":1},{"id":2,"start":"1230","end":"1330","txt":1,"isAvailable":1}]}],
+            options: {
+                //optional attributes
+                lang: "en", // language [en, fr]
+                colorsTheme: {
+                    // customize color theme
+                    col :{
+                        // private courses
+                        major: "#7751d9",
+                        minor: "#eee8ff"
+                    },
+                    prv: {
+                        // colective courses
+                        major: "#2eb3e4",
+                        minor: "#e2f4ff"
+                    }
+                },
+                timeSet: {
+                    // custumize calendar timeset
+                    start: 8,
+                    end: 18,
+                    // gap: 2 // optional gap, default 1
+                }
+            }
+        });
+    </script>
 </body>
 </html>

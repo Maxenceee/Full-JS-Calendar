@@ -1,3 +1,32 @@
+/*!
+
+
+
+
+
+
+ __  __                                                  ____                             
+|  \/  |   __ _  __  __   ___   _ __     ___    ___     / ___|   __ _   _ __ ___     __ _ 
+| |\/| |  / _` | \ \/ /  / _ \ | '_ \   / __|  / _ \   | |  _   / _` | | '_ ` _ \   / _` |
+| |  | | | (_| |  >  <  |  __/ | | | | | (__  |  __/   | |_| | | (_| | | | | | | | | (_| |
+|_|  |_|  \__,_| /_/\_\  \___| |_| |_|  \___|  \___|    \____|  \__,_| |_| |_| |_|  \__,_|
+    
+
+
+
+
+
+*/
+
+/**!
+ *
+ * 
+ * 
+ * Base code code source, please see and use the calendar.js file
+ * 
+ * 
+ */
+
 this.ref_ = {
     // Demo data
     data: [{"dayid":0,"dayc":[{"id":0,"start":"1000","end":"1755","txt":1,"isAvailable":1},{"id":1,"start":"0930","end":"1015","txt":1,"isAvailable":1},{"id":2,"start":"1300","end":"1350","txt":0,"isAvailable":1,"level":0,"age":1},{"id":3,"start":"1500","end":"1645","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":1,"dayc":[]},{"dayid":2,"dayc":[{"id":1,"start":"1230","end":"1500","txt":0,"isAvailable":0,"level":2,"age":2},{"id":2,"start":"0910","end":"1040","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":3,"dayc":[{"id":0,"start":"0900","end":"0940","txt":0,"isAvailable":1,"level":0,"age":0},{"id":1,"start":"1315","end":"1445","txt":1,"isAvailable":1}]},{"dayid":4,"dayc":[{"id":0,"start":"1110","end":"1240","txt":0,"isAvailable":1,"level":1,"age":2}]},{"dayid":5,"dayc":[{"id":0,"start":"0900","end":"1000","txt":1,"isAvailable":1},{"id":1,"start":"1300","end":"1430","txt":0,"isAvailable":1,"level":null,"age":2},{"id":2,"start":"1100","end":"1230","txt":0,"isAvailable":1,"level":null,"age":null}]},{"dayid":6,"dayc":[{"id":1,"start":"1330","end":"1510","txt":1,"isAvailable":1},{"id":2,"start":"1230","end":"1330","txt":1,"isAvailable":1}]}]
@@ -202,7 +231,7 @@ console.log(this.ref_);
                         o.appendChild(v);
                     } else {
                         w.setAttribute("class", "cal-el-r-mob-info");
-                        w.innerHTML = '<svg fill="#000000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 128 128" width="512px" height="512px"><path d="M 64 6 C 32 6 6 32 6 64 C 6 96 32 122 64 122 C 96 122 122 96 122 64 C 122 32 96 6 64 6 z M 64 12 C 92.7 12 116 35.3 116 64 C 116 92.7 92.7 116 64 116 C 35.3 116 12 92.7 12 64 C 12 35.3 35.3 12 64 12 z M 64 30 A 9 9 0 0 0 64 48 A 9 9 0 0 0 64 30 z M 64 59 C 59 59 55 63 55 68 L 55 92 C 55 97 59 101 64 101 C 69 101 73 97 73 92 L 73 68 C 73 63 69 59 64 59 z"/></svg>'
+                        w.innerHTML = '<svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="512px" height="512px"><path d="M 64 6 C 32 6 6 32 6 64 C 6 96 32 122 64 122 C 96 122 122 96 122 64 C 122 32 96 6 64 6 z M 64 12 C 92.7 12 116 35.3 116 64 C 116 92.7 92.7 116 64 116 C 35.3 116 12 92.7 12 64 C 12 35.3 35.3 12 64 12 z M 64 30 A 9 9 0 0 0 64 48 A 9 9 0 0 0 64 30 z M 64 59 C 59 59 55 63 55 68 L 55 92 C 55 97 59 101 64 101 C 69 101 73 97 73 92 L 73 68 C 73 63 69 59 64 59 z"/></svg>'
                         n.appendChild(w);
                     }
                     o.innerHTML += '<h4 class="cal-r-date">'+ u.start.slice(0, 2)+":"+u.start.slice(2) + " - " + u.end.slice(0, 2)+":"+u.end.slice(2) +'</h4>'
