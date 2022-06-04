@@ -107,7 +107,7 @@ console.log(this.ref_);
                 b.setAttribute("class", "cal-mob-pop-box-cnt");
                 c.setAttribute("class", "cal-mob-pop-close");
                 c.setAttribute("id", "cal-mob-pop-close-btn");
-                a.onclick = (e) => {
+                a.onclick =  (e) => {
                     if (e.target === c || e.target === a) {
                         this.rootPop.classList.remove("-pop-active");
                         this.rootPop.removeChild(a);

@@ -69,10 +69,8 @@
         }
     }
     var dataErrorHandler = (a, b) => {
-        let error = Me("h1", "error-handl", {in: b});
-    
         a.innerHTML = "";
-        Md(a, error);
+        Md(a, Me("h1", "error-handl", {in: b}));
     };
 
     var wK = function(a) {
@@ -164,7 +162,7 @@
     },
 
     size = function(a) {
-        return a.clientWidth
+        return ((a && a.clientWidth) || window.innerWidth)
     }
 
     class fn {
@@ -190,7 +188,7 @@
             return arr[key]
         }
         langDay() {
-            return this.lang_sel(this.daysName[size(this.root) > 600 ? "long" : "short"], this.options.lang)
+            return this.lang_sel(this.daysName.long, this.options.lang)
         }
         langLongDay() {
             return this.lang_sel(this.daysName.long, this.options.lang)
@@ -211,7 +209,7 @@
             return this.lang_sel({"en": ["Start", "End", "Duration", "Level", "Age"], "fr": ["Début", "Fin", "Durée", "Niveau", "Age"]}, this.options.lang)
         }
         uniHeight() {
-            return size(this.root) > 600 ? 100 : 50
+            return size() > 600 ? 100 : 50
         }
         error() {
             return this.lang_sel({"en": "An error occurred while loading the schedule, please try again later.", "fr": "Une erreur s'est produite lors du chargement du planning, veuillez réessayer ultérieurement."}, this.options.lang)
@@ -240,13 +238,15 @@
         let a = Me("div", "cal-top"),
             c = Me("div", "cal-tp-c"),
             u = Me("div", "cal-tp-br"),
-            i = Me("div", "cal-root-mob-pop");
+            i = Me("div", "cal-root-mob-pop"),
+            s = size() < 600;
         Md(this.root, i);
         this.popRoot = i;
 
         headDaysRow(this, w, td, c);
         
-        (size(this.root) < 600) && smallGesture(this, a);
+        s && smallGesture(this, a);
+        s ? Mc(this.root, "-small") : Mr(this.root, "-small")
 
         Md(this.root, Md(a, [u, c]));
         // _.gridB(content, w, b)
@@ -270,7 +270,7 @@
 
         Md(this.root, Md(a, Md(b, Md(c, [l, Md(r, s)]))));
         
-        size(this.root) < 600 && this.gridGrow("cal-tp-day", "cal-grid-el-pr", this.td);
+        size() < 600 && this.gridGrow("cal-tp-day", "cal-grid-el-pr", this.td);
     
         // _.desktop() ? _.deskFpopup() : _.mobFpopup();
     };
@@ -301,8 +301,8 @@
     };
     g.gridresize = function(a) {
         if (this.standardViewportWidth !== window.innerWidth) {
-            if (size(this.root > 600)) this.uniHeight = 100;
-            else this.uniHeight = 50;
+            if (size() > 600) this.options.uniHeight = 100;
+            else this.options.uniHeight = 50;
             this.root.innerHTML = "";
             this.drawGrid();
             this.standardViewportWidth = window.innerWidth
@@ -340,11 +340,12 @@
     gridPatern = function(n, m, o, p, q) {
         for(var y = 0; y < m; y++) {
             let d = Me("div", "cal-grid-el-pr"),
-                un = Me("div", "cal-line-r-c");
+                un = Me("div", "cal-line-r-c"),
+                s = size() > 600;
             Ms(d, "cal-line-index", y);
 
             linePatern(o, p, q, d);
-            q.data.length && (createEvents(q, un, q.data[y], getElementsIndex(q.data[y].dayc)))
+            q.data.length && (createEvents(q, un, q.data[y], getElementsIndex(q.data[y].dayc, s)))
             Md(n, Md(d, un));
         }
     },
@@ -441,11 +442,11 @@
     e.addDetails = function(a, b, c, d, e) {
         let n = b.age !== undefined,
             m = b.level !== undefined;
-        if (size(this.container.root) > 600 && a >= 1)
+        if (size() > 600 && a >= 1)
             n && lag(c, this.element, b, this.options),
             m && llv(c, this.element, b, this.options),
             Md(e, c);
-        else if (size(this.container.root) > 600 && a < 1)
+        else if (size() > 600 && a < 1)
             n && Ms(this.element, "rdv-el-age", b.age),
             m && Ms(this.element, "rdv-el-lvl", b.level),
             a <= 0.7 && (d.innerText += "..."),
@@ -507,9 +508,13 @@
         return b+c
     }
 
-    var getElementsIndex = function(a) {
+    var getElementsIndex = function(a, n) {
         var b = [],
-            res = {};
+            res = {},
+            l = 100,
+            j = n ? 20 : 50,
+            h = 10,
+            g
     
         if (a.length <= 1) {
             return [{index: 0, size: 100, offset: 0, object: a[0]}]
@@ -526,10 +531,10 @@
                     // console.log(nxst, st, ed);
     
                     if (nxst >= st && nxst <= ed) {
-                        size = 90
+                        size = l-h
                         offset = 0;
                     } else {
-                        size = 100
+                        size = l
                         offset = 0;
                     }
                 }
@@ -541,24 +546,24 @@
                         ed =  stringToTimeMin(e.end);
                     if (nxed - nxst < 60) nxed = nxst + 60;
                     
-                    if (el-1 >= 0 && nxst <= st && nxed >= ed && b[el].size < 100 && b[el].offset == 0) {
-                        size = 80
-                        offset = 20;
+                    if (el-1 >= 0 && nxst <= st && nxed >= ed && b[el].size < l && b[el].offset == 0) {
+                        size = l-j
+                        offset = j;
                         break;
                     } else if (nxst <= st && nxed >= ed) {
-                        size = 90
+                        size = n ? l-h : l-j
                         offset = 0;
                         break;
                     } else if (nxed >= ed || nxst <= ed && nxed > st || nxed > st) {
-                        size = 80
-                        offset = 20;
+                        size = n ? l-h : l-j
+                        offset = n ? h : j;
                         if (b[el].offset > 0) {
-                            size -= 10;
-                            offset += 10;
+                            size -= h;
+                            offset += h;
                         }
                         break;
                     } else if (0 == size) {
-                        size = 100
+                        size = l
                         offset = 0;
                     }
                 }
@@ -627,6 +632,9 @@
         for(var i = 0; i < a.length; i++)
             b.addEventListener(a[i], this.event, {passive: true});
     };
+    ce.event = function() {
+        return this.event
+    };
     ce.removeEvent = function(a) {
         for(var i = 0; i < a.length; i++)
             this.caller.removeEventListener(this.name[i], this.event);
@@ -646,30 +654,31 @@
     }
     var p = Popup.prototype;
     p.lesteners = function() {
-        let n = oppb(),
+        let q = size() > 600,
+            n = q ? oppb() : dppb(this.parent),
             t = this,
             b = stringToTime(this.content),
             c = this.container;
         this.base = n.m,
+        this.d = q,
         Md(n.t, jhover(this.eventElm, c.today)),
         Md(n.b, fhover(this.content, c.options, b));
 
+        let z = [["resize"], document, t.onresize.bind(this)];
 
-        this.newEvts([[["mouseenter"], t.eventElm, t.show.bind(this)], [["mouseleave"], t.eventElm, t.remove.bind(this)], [["resize"], document, t.remove.bind(this)]])
-        // this.events.push(new CalEvents(["mouseenter"], t.eventElm, t.show.bind(this)));
-        // this.events.push(new CalEvents(["mouseleave"], t.eventElm, t.remove.bind(this)));
-        // this.events.push(new CalEvents(["resize"], document, t.remove.bind(this)));
+        q ? this.newEvts([[["mouseenter"], t.eventElm, t.show.bind(this)], [["mouseleave"], t.eventElm, t.remove.bind(this)], z]) :
+        this.newEvts([[["click"], t.eventElm, t.show.bind(this)], z])
     };
     p.show = function() {
         let t = this;
         Md(t.parent, t.base);
-        this.moveEvent = new CalEvents(["mousemove"], document, t.move.bind(this));
+        this.d && (this.moveEvent = new CalEvents(["mousemove"], document, t.move.bind(this)));
     };
     p.move = function(e, y) {
         let d = this.base,
             i = d.getBoundingClientRect(),
             o = this.container.root.getBoundingClientRect(),
-            r = size(this.container.root) > 600,
+            r = size() > 600,
             l = coor(r, e, o, i),
             m = e.clientY < o.top + o.height - (i.height + 10) ? 10 : - (i.height);
         trs(d, e, l, m);
@@ -677,6 +686,10 @@
     p.remove = function() {
         this.base.remove();
         this.moveEvent.removeEvent(this.move);
+    };
+    p.onresize = function() {
+        this.remove();
+        this.events.forEach(e => e.resizeEvent(e.event()));
     };
     p.newEvts = function(a, b, c) {
         a && !b && !c ? jdg(a, this.events) : jdf(this.events, a, b, c);
@@ -702,11 +715,26 @@
             elmDM = timeSE%60;
         return {h: elmDH, m: elmDM, dates: {sh: sh/60, sm: sm, eh: eh/60, em: em}}
     },
+    dppb = function(t) {
+        let a = Me("div", "cal-mob-pop-root-c"),
+            b = Me("div", "cal-mob-pop-box-cnt"),
+            c = Me("div", "cal-mob-pop-close"),
+            n = oppb();
+        Ms(c, "id", "cal-mob-pop-close-btn");
+        a.onclick = (e) => {
+            if (e.target === c || e.target === a) {
+                Mr(t, "-pop-active"), a.remove();
+            }
+        }
+        Md(a, Md(b, [c, n.x]));
+        return {m: a, t: n.t, b: n.b}
+    },
     oppb = function() {
         let a = Me("div", "cal-hover-el"),
             b = Me("div", "cal-hover-el-c-t"),
-            c = Me("div", "cal-hover-el-c-b");
-        return {m: Md(a, Md(Me("div", "cal-hover-el-c"), [b, c])), t: b, b: c}
+            c = Me("div", "cal-hover-el-c-b"),
+            d = Me("div", "cal-hover-el-c");
+        return {m: Md(a, Md(d, [b, c])), x: Md(d, [b, c]), t: b, b: c}
     },
     jhover = (u, v) => {
         let t = u.getAttribute('el-date') + '-'+ (parseInt(u.getAttribute('el-date')) < v.getDate() ? v.getMonth()+2 : v.getMonth()+1),
@@ -717,8 +745,8 @@
         let t = m,
             a = Me("h1", "cal-tp-day-tt", {in: t.courses[n.txt]}),
             b = Me("h2", "cal-tp-day-tt", {in: t.availability[n.isAvailable]}),
-            c = Md(Me("h3"), [Me("span", "", {in: t.textOptions[0]+": "}), Me("span", "", {in: (o.dates.sh < 10 && "0" + o.dates.sh)+":"+(o.dates.sm < 10 && "0" + o.dates.sm)})]),
-            d = Md(Me("h3"), [Me("span", "", {in: t.textOptions[1]+": "}), Me("span", "", {in: (o.dates.eh < 10 && "0" + o.dates.eh)+":"+(o.dates.em < 10 && "0" + o.dates.em)})]),
+            c = Md(Me("h3"), [Me("span", "", {in: t.textOptions[0]+": "}), Me("span", "", {in: ((o.dates.sh < 10 && "0") + o.dates.sh)+":"+((o.dates.sm < 10 && "0") + o.dates.sm)})]),
+            d = Md(Me("h3"), [Me("span", "", {in: t.textOptions[1]+": "}), Me("span", "", {in: ((o.dates.eh < 10 && "0") + o.dates.eh)+":"+((o.dates.em < 10 && "0") + o.dates.em)})]),
             e = Md(Me("h3"), [Me("span", "", {in: t.textOptions[2]+": "}), Me("span", "", {in: (o.h >= 1 ? (o.h +'h'+ (o.m ? o.m : '')) : (o.m + 'mins'))})]),
             f = Md(Me("h3"), [Me("span", "", {in: t.textOptions[3]+": "}), Me("span", "", {in: t.levels[n.level+1 || 0]})]),
             g = Md(Me("h3"), [Me("span", "", {in: t.textOptions[4]+": "}), Me("span", "", {in: t.ages[n.age+1 || 0]})]);

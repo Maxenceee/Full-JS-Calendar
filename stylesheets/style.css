@@ -421,7 +421,7 @@ body {
 
 .cal-grid-rdv-el {
     width: calc(100% - 5px);
-    min-width: 60%;
+    min-width: 30%;
     padding-right: 5px;
     z-index: 10;
     overflow: hidden;
@@ -543,7 +543,7 @@ body {
         /* top: -20px; */
     }
     .cal-hover-el {
-        width: 165px !important;
+        width: 185px !important;
         /* height: 260px !important; */
     }
 }
