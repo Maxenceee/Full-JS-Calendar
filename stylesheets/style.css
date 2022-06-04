@@ -172,7 +172,7 @@ body {
         overflow: hidden;
         width: calc(100%) !important;
         opacity: 1;
-        will-change: opaity width;
+        will-change: opacity width;
         transition: width opacity 0.3s ease;
         -moz-transition: width opacity 0.3s ease;
         -webkit-transition: width opacity 0.3s ease;

@@ -84,12 +84,13 @@
         }
     },
     tK = function(a) {
-        a.colorsTheme || {
-            col :{
+        let b = a.colorsTheme || {};
+        a.colorsTheme = {
+            col: b.col || {
                 major: "#7751d9",
                 minor: "#eee8ff"
             },
-            prv: {
+            prv: b.prv || {
                 major: "#2eb3e4",
                 minor: "#e2f4ff"
             }
@@ -132,6 +133,15 @@
         (b.length > 1) ? dj(a, b) : a.appendChild(b);
         return a
     },
+    Mg = function(a, b) {
+        return a.getElementsByClassName(b)
+    },
+    Mqa = function(a, b) {
+        return a.querySelectorAll(b)
+    },
+    Mq = function(a, b) {
+        return a.querySelector(b)
+    },
     dj = function(a, b) {
         for(var i = 0; i < b.length; i++) 
             a.appendChild(b[i]);
@@ -170,10 +180,10 @@
             tK(this.options);
 
             var u = this.configure(this.options);
-            var g = this.grid = new Grid(t, u, s.data).drawGrid();
+            this.grid = new Grid(t, u, s.data).drawGrid();
         }
         configure(a) {
-            a && (a.days = this.langDay(), a.ages = this.ages(), a.levels = this.levels(), a.courses = this.courses(), a.uniHeight = this.uniHeight())
+            a && (a.days = this.langDay(), a.dayslong = this.langLongDay(), a.ages = this.ages(), a.levels = this.levels(), a.courses = this.courses(), a.uniHeight = this.uniHeight(), a.availability = this.availability(), a.textOptions = this.textOptions())
             return a
         }
         lang_sel(arr, key) {
@@ -181,6 +191,9 @@
         }
         langDay() {
             return this.lang_sel(this.daysName[size(this.root) > 600 ? "long" : "short"], this.options.lang)
+        }
+        langLongDay() {
+            return this.lang_sel(this.daysName.long, this.options.lang)
         }
         ages() {
             return this.lang_sel({"en": ["All ages", "Child", "Teen", "Adult"], "fr": ["Tout âge", "Enfant", "Ado", "Adulte"]}, this.options.lang)
@@ -190,6 +203,12 @@
         }
         courses() {
             return this.lang_sel({"en": ["Collective course", "Private course"], "fr": ["Cours collectif", "Cours privé"]}, this.options.lang)
+        }
+        availability() {
+            return this.lang_sel({"en": ["Actuellement disponible", "Actuellement indisponible"], "fr": ["Actuellement disponible", "Actuellement indisponible"]}, this.options.lang)
+        }
+        textOptions() {
+            return this.lang_sel({"en": ["Start", "End", "Duration", "Level", "Age"], "fr": ["Début", "Fin", "Durée", "Niveau", "Age"]}, this.options.lang)
         }
         uniHeight() {
             return size(this.root) > 600 ? 100 : 50
@@ -205,7 +224,8 @@
         this.today = new Date(),
         this.root = a,
         this.data = c,
-        this.options = b;
+        this.options = b,
+        this.resizeEvent();
     };
     var g = Grid.prototype;
     g.drawGrid = function() {
@@ -213,7 +233,7 @@
         this.gridHead(t), this.gridBody(t);
     };
     g.gridHead = function(w) {
-        var td = this.today.getDay()-1;
+        var td = this.td = this.today.getDay()-1;
         if (td < 0) {
             td = 6;
         }
@@ -222,11 +242,11 @@
             u = Me("div", "cal-tp-br"),
             i = Me("div", "cal-root-mob-pop");
         Md(this.root, i);
-        this.rootPop = i;
+        this.popRoot = i;
 
         headDaysRow(this, w, td, c);
         
-        (size(this.root) < 600) && smallGesture(a);
+        (size(this.root) < 600) && smallGesture(this, a);
 
         Md(this.root, Md(a, [u, c]));
         // _.gridB(content, w, b)
@@ -247,12 +267,48 @@
         (duration < 24 || (duration = 23));
 
         datesColumn(l, st, duration, timeSet, this), gridPatern(s, days, duration, timeSet, this), scrollShadow(b, a);
-        
+
         Md(this.root, Md(a, Md(b, Md(c, [l, Md(r, s)]))));
+        
+        size(this.root) < 600 && this.gridGrow("cal-tp-day", "cal-grid-el-pr", this.td);
     
-        // _.initMobileGrid();
         // _.desktop() ? _.deskFpopup() : _.mobFpopup();
     };
+    g.gridGrow = function(r, d, i) {
+        if (i > 6 || i < 0) return
+        this.selectedIndexGrid = i
+        Mqa(document, ".cal-tp-day-tt").forEach((e, u) => {
+            e.innerHTML = this.options.dayslong[u]
+        });
+        let a = Mg(document, r),
+            b = Mg(document, d);
+        [].forEach.call(a, function(el) {
+            Mr(el, "selected-day");
+        });
+        Mc(a[i], "selected-day");
+        [].forEach.call(b, function(el) {
+            Mr(el, "selected-day");
+        });
+        Mc(b[i], "selected-day");
+        Ms(Mq(document, ".cal-tp-mob-day-btn.cal-btn-left"), "curr-sel", i);
+        Ms(Mq(document, ".cal-tp-mob-day-btn.cal-btn-right"), "curr-sel", i);
+    }
+    g.resizeEvent = function() {
+        console.log("rr");
+        this.standardViewportWidth = window.innerWidth,
+        this.revent = new CalEvents(["resize"], window, this.gridresize.bind(this));
+        console.log(this.revent);
+    };
+    g.gridresize = function(a) {
+        if (this.standardViewportWidth !== window.innerWidth) {
+            if (size(this.root > 600)) this.uniHeight = 100;
+            else this.uniHeight = 50;
+            this.root.innerHTML = "";
+            this.drawGrid();
+            this.standardViewportWidth = window.innerWidth
+        }
+    };
+
     var headDaysRow = function(a, n, m, o) {
         for(var x = 0; x < n.week.length; x++) {
             var b = Me("div", x, {type: "day"}),
@@ -262,14 +318,13 @@
             Md(o, Md(b, Md(d, [Me("H3", "cal-tp-day-tt", {in: a.options.days[x]}), Me("H2", "cal-tp-day-nb", {in: n.week[x]})])));
         }
     },
-    smallGesture = function(a) {
+    smallGesture = function(a, b) {
         let n = Me("div", "cal-tp-mob-day-btn cal-btn-left"),
             m = Me("div", "cal-tp-mob-day-btn cal-btn-right");
-        Md(a, [n, m]);
+        Md(b, [n, m]);
         [n,m].forEach((e,i) => {
             e.onclick = () => {
-                // _.mobSlidingDay(i)
-                console.log("days change", i);
+                mobSlidingDay(a, i);
             }
         });
     },
@@ -290,7 +345,6 @@
 
             linePatern(o, p, q, d);
             q.data.length && (createEvents(q, un, q.data[y], getElementsIndex(q.data[y].dayc)))
-            // _.addRElement(un, content[y], dates[y], y);
             Md(n, Md(d, un));
         }
     },
@@ -321,9 +375,14 @@
             let evt = new Event(b, a, m[i], c.dayid, t, i);
             evt.drawEvent(d[i]);
             Md(b, evt.grt());
+            new Popup(a, evt.grt(), m[i]);
             n.push(evt);
         }
         // console.log(n);
+    },
+    mobSlidingDay = (a, b) => {
+        let index = parseInt(Mq(document, ".cal-tp-day.selected-day").getAttribute("day")) + (b === 0 ? -1 : 1);
+        a.gridGrow("cal-tp-day", "cal-grid-el-pr", index);
     }
 
     var Event = function(a, b, c, d, e, f) {
@@ -380,13 +439,15 @@
         return ((parseInt(a.end.slice(0, 2))) - (parseInt(a.start.slice(0, 2))) - (parseInt(a.start.slice(2)) / 60 * 1) + (parseInt(a.end.slice(2)) / 60 * 1));
     };
     e.addDetails = function(a, b, c, d, e) {
+        let n = b.age !== undefined,
+            m = b.level !== undefined;
         if (size(this.container.root) > 600 && a >= 1)
-            b.age !== undefined && lag(c, this.element, b, this.options),
-            b.level !== undefined && llv(c, this.element, b, this.options),
+            n && lag(c, this.element, b, this.options),
+            m && llv(c, this.element, b, this.options),
             Md(e, c);
         else if (size(this.container.root) > 600 && a < 1)
-            b.age !== undefined && Ms(this.element, "rdv-el-age", b.age),
-            b.level !== undefined && Ms(this.element, "rdv-el-lvl", b.level),
+            n && Ms(this.element, "rdv-el-age", b.age),
+            m && Ms(this.element, "rdv-el-lvl", b.level),
             a <= 0.7 && (d.innerText += "..."),
             Md(e, Me("h4", "", {in: a > 0.7 ? "...":""}));
         else
@@ -400,7 +461,7 @@
             td = 6;
         }
         if (!Boolean(a.isAvailable) || (!this.t.nextWeek && (td > b || ((td == b && parseInt(a.end.slice(0, 2)) < this.container.today.getHours()) || (td == b && parseInt(a.end.slice(0, 2)) == this.container.today.getHours() && parseInt(a.end.slice(2)) < this.container.today.getMinutes()))))) {
-            c.style.opacity = "0.5";
+            c.style.opacity = "0.5",
             Mc(c, "r-unvailable"),
             Ms(c, "el-disp", 0);
         } else {
@@ -433,7 +494,11 @@
         return Me("h4", "cal-r-date", {in: j})
     },
     dl = function(a, b, c) {
-        return a[b ? "prv" : "col"][c ? "major" : "minor"]
+        let n = b ? "prv" : "col",
+            m = a[n]
+        if (!m.major || !m.minor)
+            throw Error("Two color arguments are required, "+n+".minor and "+n+".major.")
+        return m[c ? "major" : "minor"]
     },
     stringToTimeMin = (a) => {
         if (typeof a === 'number') return a
@@ -543,6 +608,130 @@
             }
         }
         return {nextWeek: nextWeek, week: weekDays}
+    }
+
+    var CalEvents = function(a, c) {
+        this.event = null;
+        this.caller = null;
+        a && this.dispatchEvent(...arguments);
+    }
+    var ce = CalEvents.prototype;
+    ce.dispatchEvent = function(a, b, c) {
+        let d = this.event;
+        if (d) {
+            throw Error("Event already exist");
+        }
+        this.caller = b;
+        this.event = c;
+        this.name = a;
+        for(var i = 0; i < a.length; i++)
+            b.addEventListener(a[i], this.event, {passive: true});
+    };
+    ce.removeEvent = function(a) {
+        for(var i = 0; i < a.length; i++)
+            this.caller.removeEventListener(this.name[i], this.event);
+    };
+
+    var Popup = function(a, b, c) {
+        let t = this.eventElm = b,
+            u = this.parent = a.popRoot;
+        this.container = a,
+        this.base = null,
+        this.events = [],
+        this.content = c;
+        while (u.lastElementChild) {
+            u.removeChild(u.lastElementChild);
+        }
+        this.lesteners();
+    }
+    var p = Popup.prototype;
+    p.lesteners = function() {
+        let n = oppb(),
+            t = this,
+            b = stringToTime(this.content),
+            c = this.container;
+        this.base = n.m,
+        Md(n.t, jhover(this.eventElm, c.today)),
+        Md(n.b, fhover(this.content, c.options, b));
+
+
+        this.newEvts([[["mouseenter"], t.eventElm, t.show.bind(this)], [["mouseleave"], t.eventElm, t.remove.bind(this)], [["resize"], document, t.remove.bind(this)]])
+        // this.events.push(new CalEvents(["mouseenter"], t.eventElm, t.show.bind(this)));
+        // this.events.push(new CalEvents(["mouseleave"], t.eventElm, t.remove.bind(this)));
+        // this.events.push(new CalEvents(["resize"], document, t.remove.bind(this)));
+    };
+    p.show = function() {
+        let t = this;
+        Md(t.parent, t.base);
+        this.moveEvent = new CalEvents(["mousemove"], document, t.move.bind(this));
+    };
+    p.move = function(e, y) {
+        let d = this.base,
+            i = d.getBoundingClientRect(),
+            o = this.container.root.getBoundingClientRect(),
+            r = size(this.container.root) > 600,
+            l = coor(r, e, o, i),
+            m = e.clientY < o.top + o.height - (i.height + 10) ? 10 : - (i.height);
+        trs(d, e, l, m);
+    };
+    p.remove = function() {
+        this.base.remove();
+        this.moveEvent.removeEvent(this.move);
+    };
+    p.newEvts = function(a, b, c) {
+        a && !b && !c ? jdg(a, this.events) : jdf(this.events, a, b, c);
+    };
+
+    var jdf = function(a, b, c, d) {
+        a.push(new CalEvents(b, c, d));
+    },
+    jdg = function(a, b) {
+        for(var i = 0; i < a.length; i++) {
+            let d = a[i];
+            jdf(b, d[0], d[1], d[2]);
+        }
+    }
+
+    var stringToTime = function(a) {
+        let sh = parseInt(a.start.slice(0,2))*60,
+            sm = parseInt(a.start.slice(2)),
+            eh = parseInt(a.end.slice(0,2))*60,
+            em = parseInt(a.end.slice(2)),
+            timeSE = (eh + em) - (sh + sm),
+            elmDH = Math.floor(timeSE/60),
+            elmDM = timeSE%60;
+        return {h: elmDH, m: elmDM, dates: {sh: sh/60, sm: sm, eh: eh/60, em: em}}
+    },
+    oppb = function() {
+        let a = Me("div", "cal-hover-el"),
+            b = Me("div", "cal-hover-el-c-t"),
+            c = Me("div", "cal-hover-el-c-b");
+        return {m: Md(a, Md(Me("div", "cal-hover-el-c"), [b, c])), t: b, b: c}
+    },
+    jhover = (u, v) => {
+        let t = u.getAttribute('el-date') + '-'+ (parseInt(u.getAttribute('el-date')) < v.getDate() ? v.getMonth()+2 : v.getMonth()+1),
+            rt = Me("div", "cal-hover-el-c-t-c", {in: '<div><svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none"><path d="M1350 5104 c-101 -27 -188 -100 -238 -199 -27 -55 -42 -141 -42 -245 l0 -87 -150 -6 c-130 -5 -162 -10 -233 -35 -149 -51 -268 -152 -340 -289 -55 -105 -67 -170 -67 -375 l0 -178 2280 0 2280 0 0 175 c0 204 -8 251 -62 365 -32 68 -56 100 -117 160 -123 122 -233 165 -448 176 l-123 7 0 107 c0 121 -16 191 -62 262 -61 96 -143 150 -256 170 -157 27 -314 -57 -390 -207 -27 -55 -42 -141 -42 -247 l0 -88 -189 0 -188 0 -6 118 c-7 140 -24 200 -77 274 -165 231 -510 197 -634 -62 -29 -61 -31 -73 -34 -197 l-4 -133 -194 0 -194 0 0 108 c0 123 -16 192 -62 264 -56 89 -136 146 -236 167 -68 14 -104 13 -172 -5z m153 -208 c39 -16 82 -61 96 -99 7 -18 11 -164 11 -408 0 -419 0 -421 -63 -476 -84 -74 -200 -45 -248 62 -17 36 -19 73 -19 413 0 314 2 378 15 410 39 93 125 134 208 98z m1173 -21 c69 -52 69 -55 69 -485 0 -430 0 -433 -69 -485 -76 -58 -186 -34 -233 50 -22 39 -23 45 -23 431 0 388 0 391 23 435 46 88 155 113 233 54z m1097 21 c39 -16 82 -61 96 -99 7 -18 11 -164 11 -408 0 -419 0 -421 -63 -476 -84 -74 -200 -45 -248 62 -17 36 -19 73 -19 413 0 314 2 378 15 410 39 93 125 134 208 98z"/><path d="M282 1943 l3 -1478 21 -56 c63 -163 163 -275 312 -349 127 -63 30 -60 1942 -60 1465 0 1756 3 1812 14 131 28 264 113 344 220 61 80 81 122 105 213 18 74 19 124 19 1525 l0 1448 -175 0 -175 0 0 -1437 0 -1438 -24 -51 c-13 -28 -41 -65 -62 -82 -79 -66 34 -62 -1844 -62 -1884 0 -1771 -4 -1847 63 -20 17 -47 54 -59 82 l-24 50 0 1438 0 1437 -175 0 -175 0 2 -1477z"/><path d="M1810 2780 l0 -290 320 0 320 0 0 290 0 290 -320 0 -320 0 0 -290z"/><path d="M2670 2780 l0 -290 320 0 320 0 0 290 0 290 -320 0 -320 0 0 -290z"/><path d="M3530 2780 l0 -290 323 2 322 3 0 285 0 285 -322 3 -323 2 0 -290z"/><path d="M945 2287 c-3 -7 -4 -136 -3 -287 l3 -275 323 -3 322 -2 0 290 0 290 -320 0 c-249 0 -322 -3 -325 -13z"/><path d="M1810 2010 l0 -290 320 0 320 0 0 290 0 290 -320 0 -320 0 0 -290z"/><path d="M2670 2010 l0 -290 320 0 320 0 0 290 0 290 -320 0 -320 0 0 -290z"/><path d="M3530 2010 l0 -290 323 2 322 3 0 285 0 285 -322 3 -323 2 0 -290z"/><path d="M940 1245 l0 -285 325 0 325 0 0 285 0 285 -325 0 -325 0 0 -285z"/><path d="M1810 1245 l0 -285 320 0 320 0 0 285 0 285 -320 0 -320 0 0 -285z"/><path d="M2670 1245 l0 -285 320 0 320 0 0 285 0 285 -320 0 -320 0 0 -285z"/><path d="M3530 1245 l0 -285 325 0 325 0 0 285 0 285 -325 0 -325 0 0 -285z"/></g></svg></div><h4>'+ t + '</h4>'})
+        return rt
+    },
+    fhover = (n, m, o) => {
+        let t = m,
+            a = Me("h1", "cal-tp-day-tt", {in: t.courses[n.txt]}),
+            b = Me("h2", "cal-tp-day-tt", {in: t.availability[n.isAvailable]}),
+            c = Md(Me("h3"), [Me("span", "", {in: t.textOptions[0]+": "}), Me("span", "", {in: (o.dates.sh < 10 && "0" + o.dates.sh)+":"+(o.dates.sm < 10 && "0" + o.dates.sm)})]),
+            d = Md(Me("h3"), [Me("span", "", {in: t.textOptions[1]+": "}), Me("span", "", {in: (o.dates.eh < 10 && "0" + o.dates.eh)+":"+(o.dates.em < 10 && "0" + o.dates.em)})]),
+            e = Md(Me("h3"), [Me("span", "", {in: t.textOptions[2]+": "}), Me("span", "", {in: (o.h >= 1 ? (o.h +'h'+ (o.m ? o.m : '')) : (o.m + 'mins'))})]),
+            f = Md(Me("h3"), [Me("span", "", {in: t.textOptions[3]+": "}), Me("span", "", {in: t.levels[n.level+1 || 0]})]),
+            g = Md(Me("h3"), [Me("span", "", {in: t.textOptions[4]+": "}), Me("span", "", {in: t.ages[n.age+1 || 0]})]);
+
+        a.style.color = dl(t.colorsTheme, n.txt, 0)+'!important;'
+        b.style.color = !t.isAvailable ? "#E64826" : "#18BEC9";
+        return Md(Me("div", "cal-hover-el-c-b-c"), [a, Md(Me("div"), [b, c, d, e, f, g])]);
+    },
+    coor = function(a, b, c, d) {
+        return a ? b.clientX < c.left + c.width - (d.width + 10) ? 10 : - (d.width) : b.clientX < c.left + c.width/2 ? 10 : - (d.width)
+    },
+    trs = function(a, b, c, d) {
+        a.style.transform = 'translate('+ (b.clientX + c) +'px, '+ (b.clientY + d) +'px)';
     }
     
     return fn.Calendar = fn, "undefined" != typeof window && (window.Calendar = fn), fn
