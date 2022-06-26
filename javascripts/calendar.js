@@ -55,7 +55,7 @@ window._cfing = {css: ['@font-face{font-family:Quicksand-Regular;src:url(/fontes
         void 0 !== s && t.add(s)
     };
     const Ks = (a) => {
-        a.lang = a.lang || "en"
+        a.lang = (a && a.lang) || "en"
         return a
     }
     const Ns = (a) => {
@@ -74,7 +74,7 @@ window._cfing = {css: ['@font-face{font-family:Quicksand-Regular;src:url(/fontes
             if (!t.data && !t.sourceURL)
                 throw Error("Missing data, make sure to add data first.");
             this._config = function(t) {
-                return (t = t || {}).options = Ks(t.options) || {}, t.data = Ns(t.data), t
+                return (t = t || {}).options = Ks(t.options || {}) || {}, t.data = Ns(t.data), t
             }(t),
             this._scopeCache = new Map
         }
